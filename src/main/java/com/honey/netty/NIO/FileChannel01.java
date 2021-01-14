@@ -6,7 +6,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
 /**
- * @Description：
+ * @Description：讲一个字符串存储到文件
  * @Date: Created in 2021/1/13 23:37
  * @Author Brayden
  * @Version 1.0

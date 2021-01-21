@@ -8,6 +8,8 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelPipeline;
 import io.netty.util.CharsetUtil;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * @author ：Brayden
  * @date ：Created in 2021/1/21 14:22
@@ -37,6 +39,31 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         Channel channel = ctx.channel();
         ChannelPipeline pipeline = ctx.pipeline(); //本质是一个双向链接, 出站入站
 
+
+        //测试taskqueue
+
+        ctx.channel().eventLoop().execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(10*1000);
+                    ctx.writeAndFlush(Unpooled.copiedBuffer("hello, 客户端~(>^ω^<)喵1", CharsetUtil.UTF_8));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+
+
+        ctx.channel().eventLoop().schedule(new Runnable() {
+            @Override
+            public void run() {
+                ctx.writeAndFlush(Unpooled.copiedBuffer("hello, 客户端~(>^ω^<)喵2", CharsetUtil.UTF_8));
+            }
+        },5 ,TimeUnit.SECONDS);
+
+
         //将 msg 转成一个 ByteBuf
         //ByteBuf 是 Netty 提供的，不是 NIO 的 ByteBuffer.
         ByteBuf buf = (ByteBuf) msg;
@@ -50,7 +77,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         //writeAndFlush 是 write + flush
         //将数据写入到缓存，并刷新
         //一般讲，我们对这个发送的数据进行编码
-        ctx.writeAndFlush(Unpooled.copiedBuffer("hello, 客户端~(>^ω^<)喵1", CharsetUtil.UTF_8));
+        ctx.writeAndFlush(Unpooled.copiedBuffer("hello, 客户端~(>^ω^<)喵10", CharsetUtil.UTF_8));
     }
 
     //处理异常, 一般是需要关闭通道
